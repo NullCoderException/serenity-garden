@@ -2,27 +2,38 @@
 
 ## Setup Phase
 
-- [ ] Initialize project repository
-- [ ] Set up Phaser.js with Webpack
-- [ ] Create basic project structure
-- [ ] Implement simple "Hello World" scene
-- [ ] Set up development environment with hot reloading
-- [ ] Create asset loading system
-- [ ] Implement camera controls (pan/zoom)
+- [x] Initialize project repository
+- [x] Set up Phaser.js with Webpack
+- [x] Create basic project structure
+- [x] Implement simple "Hello World" scene
+- [x] Set up development environment with hot reloading
+- [x] Create asset loading system (placeholder system ready)
+- [x] Implement camera controls (pan/zoom)
 
 ## Core System Development
 
-- [ ] Design and implement UI framework
-  - [ ] Element selection panel
-  - [ ] Tool selection
-  - [ ] Settings menu
-- [ ] Create garden element base class
-- [ ] Implement grid system for element placement
-- [ ] Create basic element placement mechanics
+### Next Steps (Priority Order)
+- [ ] Create garden element base class system
+  - [ ] GameObject base class with common properties
+  - [ ] Draggable interface implementation
+  - [ ] Element state management
+- [ ] Implement element placement mechanics
   - [ ] Drag and drop functionality
+  - [ ] Snap-to-grid option
+  - [ ] Free placement mode
   - [ ] Element collision detection
   - [ ] Element rotation and scaling
+- [ ] Design and implement UI framework
+  - [ ] Element selection panel
+  - [ ] Tool selection (rake patterns, etc.)
+  - [ ] Settings menu (toggle grid, sound, etc.)
+  - [ ] Mode switcher (edit/meditation)
+- [ ] Create garden boundary system
+  - [ ] Define placeable areas
+  - [ ] Visual boundary indicators
 - [ ] Implement basic save/load functionality (localStorage)
+  - [ ] Garden state serialization
+  - [ ] Automatic save option
 
 ## Garden Elements
 
