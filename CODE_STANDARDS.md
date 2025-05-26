@@ -8,7 +8,7 @@
 - Document complex logic and important design decisions
 - Optimize for readability first, performance second (except in critical sections)
 
-## JavaScript Coding Standards
+## TypeScript/JavaScript Coding Standards
 
 ### Naming Conventions
 
@@ -26,20 +26,36 @@
 - Group related functionality into classes or modules
 - Keep file length reasonable (under 500 lines as a guideline)
 
+### TypeScript Specific
+
+- Enable strict mode in tsconfig.json
+- Always specify return types for functions
+- Use interfaces for object shapes
+- Prefer type aliases for unions and complex types
+- Use access modifiers (private, public, protected) on class members
+- Prefix unused parameters with underscore (e.g., `_unusedParam`)
+- Avoid `any` type; use `unknown` if type is truly unknown
+
 ### Comments and Documentation
 
-- Use JSDoc comments for functions and classes
+- Use JSDoc comments for functions and classes (TypeScript will infer types from code)
+- Document complex logic and non-obvious design decisions
+- Keep comments concise and meaningful
 
-```javascript
+```typescript
 /**
  * Creates a new garden element at the specified position
- * @param {string} type - The type of element to create
- * @param {object} position - The x,y coordinates for placement
- * @param {object} [options] - Optional configuration settings
- * @returns {GardenElement} The created element
+ * @param type - The type of element to create
+ * @param position - The x,y coordinates for placement
+ * @param options - Optional configuration settings
+ * @returns The created element
  */
-function createGardenElement(type, position, options = {}) {
-  // Implementation
+function createElement(
+    type: ElementType,
+    position: Position,
+    options?: ElementOptions
+): GardenElement {
+    // Implementation
 }
 ```
 
