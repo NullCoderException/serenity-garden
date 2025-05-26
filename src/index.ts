@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import MainScene from './scenes/MainScene';
 import './styles.css';
 
-const config = {
+const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
     parent: 'game-container',
     width: 1280,
@@ -15,7 +15,7 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 0 },
+            gravity: { x: 0, y: 0 },
             debug: false
         }
     },
