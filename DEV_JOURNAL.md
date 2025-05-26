@@ -60,6 +60,42 @@ This document serves as a development journal for the Zen Garden Simulator proje
 
 <!-- Add your journal entries below as you progress through development -->
 
+## January 25, 2025 - Initial Project Setup Complete
+
+### Accomplishments
+- Initialized npm project with Phaser.js 3.90.0
+- Set up Webpack 5 with development server and hot reloading
+- Created basic project structure with organized folders for scenes, objects, utils, and systems
+- Implemented basic Phaser scene with placeholder garden visualization
+- Added functional camera controls (right-click/middle-click pan, scroll zoom)
+- Created placeholder asset generation system for initial development
+- Set up proper git branching workflow
+
+### Challenges
+- Initial CopyWebpackPlugin error due to missing assets folder - resolved with .gitkeep
+- Decided between grid-based vs free-form placement - will implement both options
+- Camera bounds needed careful tuning to prevent users from getting lost
+
+### Design Decisions
+- Used Phaser.AUTO renderer for best browser compatibility
+- Set 1280x720 as base resolution with responsive scaling
+- Implemented placeholder asset generation to enable immediate development without art assets
+- Camera controls use right/middle mouse to avoid conflicts with future left-click interactions
+- Organized code structure to separate concerns (scenes, objects, systems)
+
+### Learnings
+- Phaser 3's camera system is quite powerful with built-in bounds and zoom
+- Webpack 5 configuration is cleaner than previous versions
+- Creating placeholder graphics programmatically speeds up prototyping significantly
+- Important to set up proper project structure early to avoid refactoring later
+
+### Next Steps
+- Create GameObject base class for all garden elements
+- Implement drag-and-drop system for element placement
+- Design UI framework for element selection panel
+- Add grid overlay toggle for precise placement
+- Create first real garden elements (stones, plants)
+
 ### [Example Entry] May 19, 2025 - Project Setup Complete
 
 #### Accomplishments
