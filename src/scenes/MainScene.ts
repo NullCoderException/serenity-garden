@@ -1,21 +1,21 @@
 import Phaser from 'phaser';
 
 export default class MainScene extends Phaser.Scene {
+    private isDragging: boolean = false;
+    private dragStartX: number = 0;
+    private dragStartY: number = 0;
+    private cameraStartX: number = 0;
+    private cameraStartY: number = 0;
+
     constructor() {
         super({ key: 'MainScene' });
-        
-        this.isDragging = false;
-        this.dragStartX = 0;
-        this.dragStartY = 0;
-        this.cameraStartX = 0;
-        this.cameraStartY = 0;
     }
 
-    preload() {
+    public preload(): void {
         this.createPlaceholderAssets();
     }
 
-    create() {
+    public create(): void {
         this.cameras.main.setBounds(-1000, -1000, 3280, 2720);
         this.cameras.main.setZoom(1);
         
@@ -30,7 +30,7 @@ export default class MainScene extends Phaser.Scene {
         }).setOrigin(0.5).setScrollFactor(0);
     }
 
-    createPlaceholderAssets() {
+    private createPlaceholderAssets(): void {
         this.load.on('loaderror', () => {
             this.createRectangle('stone', 50, 50, 0x808080);
             this.createRectangle('plant', 40, 60, 0x228B22);
@@ -42,7 +42,7 @@ export default class MainScene extends Phaser.Scene {
         this.createRectangle('sand', 100, 100, 0xF5DEB3);
     }
 
-    createRectangle(key, width, height, color) {
+    private createRectangle(key: string, width: number, height: number, color: number): void {
         const graphics = this.make.graphics({ x: 0, y: 0 }, false);
         graphics.fillStyle(color);
         graphics.fillRect(0, 0, width, height);
@@ -50,7 +50,7 @@ export default class MainScene extends Phaser.Scene {
         graphics.destroy();
     }
 
-    createGardenBase() {
+    private createGardenBase(): void {
         const gardenBounds = new Phaser.Geom.Rectangle(100, 100, 1080, 520);
         const graphics = this.add.graphics();
         
@@ -65,8 +65,8 @@ export default class MainScene extends Phaser.Scene {
         this.add.image(900, 450, 'plant').setInteractive();
     }
 
-    setupCameraControls() {
-        this.input.on('pointerdown', (pointer) => {
+    private setupCameraControls(): void {
+        this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
             if (pointer.rightButtonDown() || pointer.middleButtonDown()) {
                 this.isDragging = true;
                 this.dragStartX = pointer.x;
@@ -76,7 +76,7 @@ export default class MainScene extends Phaser.Scene {
             }
         });
 
-        this.input.on('pointermove', (pointer) => {
+        this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
             if (this.isDragging) {
                 const dragX = this.dragStartX - pointer.x;
                 const dragY = this.dragStartY - pointer.y;
@@ -92,14 +92,14 @@ export default class MainScene extends Phaser.Scene {
             this.isDragging = false;
         });
 
-        this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY) => {
+        this.input.on('wheel', (_pointer: Phaser.Input.Pointer, _gameObjects: Phaser.GameObjects.GameObject[], _deltaX: number, deltaY: number) => {
             const zoom = this.cameras.main.zoom;
             const newZoom = Phaser.Math.Clamp(zoom - (deltaY * 0.001), 0.5, 2);
             this.cameras.main.setZoom(newZoom);
         });
     }
 
-    update() {
-        
+    public update(): void {
+        // Game loop logic will go here
     }
 }
