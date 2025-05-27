@@ -7,8 +7,8 @@ A peaceful, web-based zen garden simulator where users can place, arrange, and i
 ## Technical Stack
 
 - **Framework**: Phaser.js 3
-- **Languages**: JavaScript (ES6+), HTML5, CSS3
-- **Build Tools**: Webpack
+- **Languages**: TypeScript, HTML5, CSS3
+- **Build Tools**: Webpack with TypeScript compiler
 - **Version Control**: Git
 - **Optional Backend**: Node.js with Express (for saving gardens)
 

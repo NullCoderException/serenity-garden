@@ -14,18 +14,18 @@
 ## Core System Development
 
 ### Next Steps (Priority Order)
-- [ ] Create garden element base class system
-  - [ ] GameObject base class with common properties
-  - [ ] Draggable interface implementation
-  - [ ] Element state management
-- [ ] Implement element placement mechanics
-  - [ ] Drag and drop functionality
-  - [ ] Snap-to-grid option
+- [x] Create garden element base class system
+  - [x] GameObject base class with common properties
+  - [x] Draggable interface implementation
+  - [x] Element state management
+- [x] Implement element placement mechanics
+  - [x] Drag and drop functionality
+  - [x] Snap-to-grid option
   - [ ] Free placement mode
-  - [ ] Element collision detection
+  - [x] Element collision detection
   - [ ] Element rotation and scaling
 - [ ] Design and implement UI framework
-  - [ ] Element selection panel
+  - [x] Element selection panel
   - [ ] Tool selection (rake patterns, etc.)
   - [ ] Settings menu (toggle grid, sound, etc.)
   - [ ] Mode switcher (edit/meditation)
@@ -38,9 +38,9 @@
 
 ## Garden Elements
 
-- [ ] Stone elements
-  - [ ] Multiple stone types/shapes
-  - [ ] Placement validation
+- [x] Stone elements
+  - [x] Multiple stone types/shapes
+  - [x] Placement validation
   - [ ] Interaction effects
 - [ ] Sand areas
   - [ ] Sand area creation

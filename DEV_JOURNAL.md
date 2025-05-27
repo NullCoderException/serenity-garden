@@ -123,6 +123,46 @@ This document serves as a development journal for the Zen Garden Simulator proje
 - Create strongly-typed event system for element interactions
 - Build type-safe UI components with proper interfaces
 
+## January 26, 2025 - Core Systems Implementation
+
+### Accomplishments
+- Created GameObject base class with full TypeScript typing
+- Implemented Draggable interface for interactive elements
+- Built comprehensive drag-and-drop system with visual feedback
+- Added snap-to-grid functionality with configurable grid size
+- Created element state management system (idle, dragging, placed)
+- Implemented UI panel for element selection and spawning
+- Added visual grid overlay toggle for precise placement
+- Integrated proper z-ordering for dragged elements
+- Created Rock and Plant classes extending GameObject
+
+### Challenges
+- Coordinating between Phaser's input system and custom drag behavior
+- Ensuring proper TypeScript types for all Phaser interactions
+- Managing z-index properly during drag operations
+- Balancing grid snapping with smooth drag feedback
+
+### Design Decisions
+- Used composition over inheritance with Draggable interface
+- Implemented state pattern for element behavior management
+- Created centralized UIManager for all UI elements
+- Used Phaser's Graphics API for grid overlay rendering
+- Separated concerns between game objects and UI components
+
+### Learnings
+- Phaser's input.dragDistanceThreshold helps prevent accidental drags
+- TypeScript interfaces work beautifully for game object contracts
+- Proper state management prevents edge cases in drag/drop
+- Visual feedback (tint, scale) greatly improves UX
+- Grid snapping needs visual indicators to be intuitive
+
+### Next Steps
+- Add rotation controls for placed elements
+- Implement collision detection between elements
+- Create more garden element types (water features, sand areas)
+- Add persistent storage for garden layouts
+- Implement settings menu for grid size and other options
+
 ### [Example Entry] May 19, 2025 - Project Setup Complete
 
 #### Accomplishments
