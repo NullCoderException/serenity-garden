@@ -14,6 +14,7 @@ export class DraggableGameObject extends GameObject {
     protected dragOffset: { x: number; y: number } = { x: 0, y: 0 };
     protected isValidPlacement: boolean = true;
     protected dragEvents: DragEvents = {};
+    protected rotationStep: number = 15; // degrees per rotation step
 
     constructor(config: GameObjectConfig & { dragEvents?: DragEvents }) {
         super({ ...config, interactive: true });
@@ -125,5 +126,26 @@ export class DraggableGameObject extends GameObject {
                x + halfWidth <= bounds.x + bounds.width &&
                y - halfHeight >= bounds.y &&
                y + halfHeight <= bounds.y + bounds.height;
+    }
+
+    public rotate(degrees: number): void {
+        this.rotation += Phaser.Math.DegToRad(degrees);
+    }
+
+    public rotateStep(clockwise: boolean = true): void {
+        const step = clockwise ? this.rotationStep : -this.rotationStep;
+        this.rotate(step);
+    }
+
+    public setRotationStep(degrees: number): void {
+        this.rotationStep = Math.max(1, Math.abs(degrees));
+    }
+
+    public getRotationDegrees(): number {
+        return Phaser.Math.RadToDeg(this.rotation);
+    }
+
+    public setRotationDegrees(degrees: number): void {
+        this.rotation = Phaser.Math.DegToRad(degrees);
     }
 }

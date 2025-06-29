@@ -15,6 +15,7 @@ export class ElementManager {
     private gridSize: number;
     private snapToGrid: boolean;
     private elementGroup: Phaser.GameObjects.Group;
+    private rotationIndicator: Phaser.GameObjects.Graphics | null = null;
 
     constructor(config: ElementManagerConfig) {
         this.scene = config.scene;
@@ -63,13 +64,29 @@ export class ElementManager {
         
         // Set up drag events for DraggableGameObjects
         if (element instanceof DraggableGameObject) {
+            const originalDrag = element['dragEvents'].onDrag;
             const originalDragEnd = element['dragEvents'].onDragEnd;
+            
+            // Update rotation indicator during drag if this element is selected
+            element['dragEvents'].onDrag = (gameObject, pointer, dragX, dragY) => {
+                if (originalDrag) {
+                    originalDrag(gameObject, pointer, dragX, dragY);
+                }
+                if (this.selectedElement === gameObject) {
+                    this.updateSelectedElementIndicator();
+                }
+            };
+            
             element['dragEvents'].onDragEnd = (gameObject, pointer) => {
                 if (originalDragEnd) {
                     originalDragEnd(gameObject, pointer);
                 }
                 if (this.snapToGrid) {
                     gameObject.snapToGrid(this.gridSize);
+                }
+                // Update indicator after snapping
+                if (this.selectedElement === gameObject) {
+                    this.updateSelectedElementIndicator();
                 }
             };
         }
@@ -99,6 +116,11 @@ export class ElementManager {
         // Visual feedback for selection
         element.setTint(0x88ff88);
         
+        // Show rotation indicator for draggable elements
+        if (element instanceof DraggableGameObject) {
+            this.showRotationIndicator(element);
+        }
+        
         // Emit selection event
         this.scene.events.emit('elementSelected', element);
     }
@@ -108,6 +130,9 @@ export class ElementManager {
             this.selectedElement.clearTint();
             const previousSelection = this.selectedElement;
             this.selectedElement = null;
+            
+            // Hide rotation indicator
+            this.hideRotationIndicator();
             
             // Emit deselection event
             this.scene.events.emit('elementDeselected', previousSelection);
@@ -177,8 +202,71 @@ export class ElementManager {
         // Update is handled by the group's runChildUpdate
     }
 
+    private showRotationIndicator(element: DraggableGameObject): void {
+        this.hideRotationIndicator();
+        
+        this.rotationIndicator = this.scene.add.graphics();
+        this.rotationIndicator.setDepth(999);
+        
+        this.updateRotationIndicator(element);
+    }
+    
+    private updateRotationIndicator(element: DraggableGameObject): void {
+        if (!this.rotationIndicator) return;
+        
+        this.rotationIndicator.clear();
+        
+        const x = element.x;
+        const y = element.y;
+        const radius = Math.max(element.displayWidth, element.displayHeight) / 2 + 15;
+        
+        // Draw a subtle center dot
+        this.rotationIndicator.fillStyle(0x00ff00, 0.6);
+        this.rotationIndicator.fillCircle(x, y, 2);
+        
+        // Draw direction line showing current rotation
+        this.rotationIndicator.lineStyle(3, 0x00ff00, 0.8);
+        const endX = x + Math.cos(element.rotation) * radius;
+        const endY = y + Math.sin(element.rotation) * radius;
+        
+        this.rotationIndicator.beginPath();
+        this.rotationIndicator.moveTo(x, y);
+        this.rotationIndicator.lineTo(endX, endY);
+        this.rotationIndicator.strokePath();
+        
+        // Draw arrowhead
+        const arrowSize = 10;
+        const arrowAngle = 0.6;
+        const backX1 = endX - Math.cos(element.rotation - arrowAngle) * arrowSize;
+        const backY1 = endY - Math.sin(element.rotation - arrowAngle) * arrowSize;
+        const backX2 = endX - Math.cos(element.rotation + arrowAngle) * arrowSize;
+        const backY2 = endY - Math.sin(element.rotation + arrowAngle) * arrowSize;
+        
+        this.rotationIndicator.fillStyle(0x00ff00, 0.8);
+        this.rotationIndicator.beginPath();
+        this.rotationIndicator.moveTo(endX, endY);
+        this.rotationIndicator.lineTo(backX1, backY1);
+        this.rotationIndicator.lineTo(backX2, backY2);
+        this.rotationIndicator.closePath();
+        this.rotationIndicator.fillPath();
+    }
+    
+    private hideRotationIndicator(): void {
+        if (this.rotationIndicator) {
+            this.rotationIndicator.destroy();
+            this.rotationIndicator = null;
+        }
+    }
+    
+    public updateSelectedElementIndicator(): void {
+        if (this.selectedElement && this.selectedElement instanceof DraggableGameObject && this.rotationIndicator) {
+            this.updateRotationIndicator(this.selectedElement);
+        }
+    }
+
     public destroy(): void {
         this.clear();
+        this.hideRotationIndicator();
         this.elementGroup.destroy();
         this.scene.input.off('gameobjectdown', this.handleElementClick, this);
         this.scene.input.off('pointerdown', this.handleBackgroundClick, this);

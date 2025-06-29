@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { ElementManager } from '../managers/ElementManager';
 import { Stone, StoneType } from '../gameObjects/elements/Stone';
+import { DraggableGameObject } from '../gameObjects/DraggableGameObject';
 
 export default class MainScene extends Phaser.Scene {
     private isDragging: boolean = false;
@@ -148,6 +149,7 @@ export default class MainScene extends Phaser.Scene {
             'Right Click + Drag: Pan camera',
             'Mouse Wheel: Zoom',
             'G: Toggle grid',
+            'R: Rotate selected element (Shift+R: Counter-clockwise)',
             'Delete: Remove selected element'
         ], {
             fontSize: '14px',
@@ -165,6 +167,15 @@ export default class MainScene extends Phaser.Scene {
             const selected = this.elementManager.getSelectedElement();
             if (selected) {
                 this.elementManager.removeElement(selected.getId());
+            }
+        });
+        
+        this.input.keyboard?.on('keydown-R', (event: KeyboardEvent) => {
+            const selected = this.elementManager.getSelectedElement();
+            if (selected && selected instanceof DraggableGameObject) {
+                const clockwise = !event.shiftKey;
+                selected.rotateStep(clockwise);
+                this.elementManager.updateSelectedElementIndicator();
             }
         });
     }
