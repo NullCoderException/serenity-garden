@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { ElementManager } from '../managers/ElementManager';
 import { Stone, StoneType } from '../gameObjects/elements/Stone';
+import { Plant, PlantType } from '../gameObjects/elements/Plant';
 import { DraggableGameObject } from '../gameObjects/DraggableGameObject';
 import { RakeType } from '../systems/RakeSystem';
 import { GardenSandLayer } from '../systems/GardenSandLayer';
@@ -55,13 +56,22 @@ export default class MainScene extends Phaser.Scene {
     private createPlaceholderAssets(): void {
         this.load.on('loaderror', () => {
             this.createRectangle('stone', 50, 50, 0x808080);
-            this.createRectangle('plant', 40, 60, 0x228B22);
+            this.createPlantTextures();
             this.createRectangle('sand-base', 100, 100, 0xF5DEB3);
         });
         
         this.createRectangle('stone', 50, 50, 0x808080);
-        this.createRectangle('plant', 40, 60, 0x228B22);
+        this.createPlantTextures();
         this.createRectangle('sand-base', 100, 100, 0xF5DEB3);
+    }
+
+    private createPlantTextures(): void {
+        // Create different colored rectangles for different plant types
+        this.createRectangle('plant_small_shrub', 35, 50, 0x228B22);     // Forest green
+        this.createRectangle('plant_tree', 60, 100, 0x006400);           // Dark green
+        this.createRectangle('plant_flower', 25, 40, 0xFF69B4);          // Hot pink
+        this.createRectangle('plant_grass', 20, 30, 0x90EE90);           // Light green
+        this.createRectangle('plant_bamboo', 30, 80, 0x32CD32);          // Lime green
     }
 
     private createRectangle(key: string, width: number, height: number, color: number): void {
@@ -293,6 +303,23 @@ export default class MainScene extends Phaser.Scene {
             this.elementManager.addElement(stone);
         });
         
+        // Create plants for placement
+        const plantTypes = [PlantType.SmallShrub, PlantType.Tree, PlantType.Flower, PlantType.Grass, PlantType.Bamboo];
+        x = 800; // Start plants after stones
+        
+        plantTypes.forEach((type, index) => {
+            const textureKey = `plant_${type}`;
+            const plant = new Plant({
+                scene: this,
+                x: x + (index * 100),
+                y: 700,
+                texture: textureKey,
+                plantType: type
+            });
+            
+            this.elementManager.addElement(plant);
+        });
+        
         // Place a few stones in the garden as examples
         const gardenStone1 = new Stone({
             scene: this,
@@ -321,7 +348,26 @@ export default class MainScene extends Phaser.Scene {
         });
         this.elementManager.addElement(gardenStone3);
         
-        this.add.text(640, 650, 'Zen Garden - Drag stones from below into the sand garden. Press T to switch to Rake mode!', {
+        // Place a few plants in the garden as examples
+        const gardenPlant1 = new Plant({
+            scene: this,
+            x: 400,
+            y: 350,
+            texture: 'plant_tree',
+            plantType: PlantType.Tree
+        });
+        this.elementManager.addElement(gardenPlant1);
+        
+        const gardenPlant2 = new Plant({
+            scene: this,
+            x: 800,
+            y: 320,
+            texture: 'plant_small_shrub',
+            plantType: PlantType.SmallShrub
+        });
+        this.elementManager.addElement(gardenPlant2);
+        
+        this.add.text(640, 650, 'Zen Garden - Drag stones and plants from below into the sand garden. Press T to switch to Rake mode!', {
             fontSize: '18px',
             color: '#ffffff',
             stroke: '#000000',

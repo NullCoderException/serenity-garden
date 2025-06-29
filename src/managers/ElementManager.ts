@@ -199,7 +199,12 @@ export class ElementManager {
     }
 
     public update(time: number, delta: number): void {
-        // Update is handled by the group's runChildUpdate
+        // Update all elements - this is necessary for animations and other time-based behaviors
+        this.elements.forEach(element => {
+            if (element.update) {
+                element.update(time, delta);
+            }
+        });
     }
 
     private showRotationIndicator(element: DraggableGameObject): void {
