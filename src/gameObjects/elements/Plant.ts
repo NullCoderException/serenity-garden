@@ -151,12 +151,13 @@ export class Plant extends DraggableGameObject {
 
     // Override rotation methods to work with base rotation
     public rotate(degrees: number): void {
-        this.baseRotation = degrees;
+        this.baseRotation = Phaser.Math.DegToRad(degrees);
     }
 
     public rotateStep(clockwise: boolean = true): void {
-        const step = this.rotationStep || (Math.PI / 8); // 22.5 degrees default
-        this.baseRotation += clockwise ? step : -step;
+        const stepDegrees = this.rotationStep || 22.5; // Default 22.5 degrees (consistent with Math.PI/8 radians)
+        const stepRadians = Phaser.Math.DegToRad(stepDegrees);
+        this.baseRotation += clockwise ? stepRadians : -stepRadians;
     }
 
     // Override to include plant-specific state
@@ -167,7 +168,7 @@ export class Plant extends DraggableGameObject {
             plantType: this.plantType,
             windPhase: this.windPhase,
             growthPhase: this.growthPhase,
-            baseRotation: this.baseRotation
+            baseRotation: Phaser.Math.RadToDeg(this.baseRotation) // Store as degrees for consistency
         };
     }
 
@@ -183,7 +184,7 @@ export class Plant extends DraggableGameObject {
             this.growthPhase = state.growthPhase;
         }
         if (state.baseRotation !== undefined) {
-            this.baseRotation = state.baseRotation;
+            this.baseRotation = Phaser.Math.DegToRad(state.baseRotation); // Convert from stored degrees to radians
         }
     }
 }
