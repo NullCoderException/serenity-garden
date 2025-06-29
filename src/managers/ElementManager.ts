@@ -199,7 +199,29 @@ export class ElementManager {
     }
 
     public update(time: number, delta: number): void {
-        // Update is handled by the group's runChildUpdate
+        // Guard clauses for invalid parameters and uninitialized state
+        if (typeof time !== 'number' || typeof delta !== 'number') {
+            console.warn('ElementManager.update: Invalid time or delta parameters');
+            return;
+        }
+        
+        if (!this.elements || this.elements.size === 0) {
+            return;
+        }
+
+        // Update all elements with error handling to prevent one failing element from crashing the update loop
+        this.elements.forEach((element, id) => {
+            try {
+                if (element && typeof element.update === 'function') {
+                    element.update(time, delta);
+                }
+            } catch (error) {
+                const elementDetails = element ? `Type: ${element.constructor.name}, ID: ${id}` : 'Element is null or undefined';
+                const errorMessage = error instanceof Error ? error.stack || error.message : String(error);
+                console.error(`ElementManager.update: Error updating element. Details: ${elementDetails}. Stack trace:`, errorMessage);
+                // Continue with other elements rather than crashing the entire update loop
+            }
+        });
     }
 
     private showRotationIndicator(element: DraggableGameObject): void {
