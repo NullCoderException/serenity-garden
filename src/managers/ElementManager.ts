@@ -199,10 +199,25 @@ export class ElementManager {
     }
 
     public update(time: number, delta: number): void {
-        // Update all elements - this is necessary for animations and other time-based behaviors
-        this.elements.forEach(element => {
-            if (element.update) {
-                element.update(time, delta);
+        // Guard clauses for invalid parameters and uninitialized state
+        if (typeof time !== 'number' || typeof delta !== 'number') {
+            console.warn('ElementManager.update: Invalid time or delta parameters');
+            return;
+        }
+        
+        if (!this.elements || this.elements.size === 0) {
+            return;
+        }
+
+        // Update all elements with error handling to prevent one failing element from crashing the update loop
+        this.elements.forEach((element, id) => {
+            try {
+                if (element && typeof element.update === 'function') {
+                    element.update(time, delta);
+                }
+            } catch (error) {
+                console.error(`ElementManager.update: Error updating element ${id}:`, error);
+                // Continue with other elements rather than crashing the entire update loop
             }
         });
     }
