@@ -138,6 +138,8 @@ export class DraggableGameObject extends GameObject {
     }
 
     public setRotationStep(degrees: number): void {
+        // Clamp to minimum of 1 degree to prevent micro-rotations that could cause performance issues
+        // or unintended behavior with very small rotation values
         this.rotationStep = Math.max(1, Math.abs(degrees));
     }
 
