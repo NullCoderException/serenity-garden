@@ -216,7 +216,9 @@ export class ElementManager {
                     element.update(time, delta);
                 }
             } catch (error) {
-                console.error(`ElementManager.update: Error updating element ${id}:`, error);
+                const elementDetails = element ? `Type: ${element.constructor.name}, ID: ${id}` : 'Element is null or undefined';
+                const errorMessage = error instanceof Error ? error.stack || error.message : String(error);
+                console.error(`ElementManager.update: Error updating element. Details: ${elementDetails}. Stack trace:`, errorMessage);
                 // Continue with other elements rather than crashing the entire update loop
             }
         });

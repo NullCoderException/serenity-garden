@@ -106,8 +106,10 @@ export class Plant extends DraggableGameObject {
         }
         
         // Check for overlaps with other plants and stones
+        // Note: Using scene.data pattern for consistency with existing Stone class
+        // Future improvement: consider dependency injection for stronger typing
         const manager = this.scene.data.get('elementManager');
-        if (manager) {
+        if (manager && typeof manager.getAllElements === 'function') {
             const elements = manager.getAllElements();
             for (const element of elements) {
                 if (element !== this) {
@@ -158,6 +160,11 @@ export class Plant extends DraggableGameObject {
         const stepDegrees = this.rotationStep || 22.5; // Default 22.5 degrees (consistent with Math.PI/8 radians)
         const stepRadians = Phaser.Math.DegToRad(stepDegrees);
         this.baseRotation += clockwise ? stepRadians : -stepRadians;
+        // Normalize rotation to keep within [0, 2π) range
+        this.baseRotation = this.baseRotation % (2 * Math.PI);
+        if (this.baseRotation < 0) {
+            this.baseRotation += 2 * Math.PI;
+        }
     }
 
     // Override to include plant-specific state
