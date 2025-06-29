@@ -2,6 +2,53 @@
 
 This document serves as a development journal for the Zen Garden Simulator project. Use it to track progress, document challenges, and record design decisions and learning experiences.
 
+## June 29, 2025 - Sand Pattern System Implementation
+
+### Accomplishments
+- Created comprehensive SandArea class as a new draggable garden element
+- Implemented RakeSystem with 4 distinct rake types (Simple, Wide, Curved, Fine)
+- Built sophisticated pattern drawing mechanics with real-time visual feedback
+- Added tool mode switching between Placement and Rake modes
+- Implemented keyboard controls for mode switching (T) and rake selection (1-4)
+- Created grid-based pattern data storage for persistence
+- Added visual pattern overlay that follows sand areas when dragged
+- Successfully integrated sand areas with existing element management system
+
+### Technical Details
+- Used Phaser Graphics API for dynamic pattern rendering
+- Implemented fixed-step interpolation for smooth rake strokes
+- Created modular RakeSystem with configurable patterns
+- Pattern data persists when sand areas are moved
+- Different rake types provide unique visual effects
+
+### Challenges
+- TypeScript required careful property initialization for graphics objects
+- Had to rename getLocalPoint to avoid base class conflicts
+- Coordinating between placement and rake modes required state management
+
+### Design Decisions
+- Chose grid-based pattern storage for performance and simplicity
+- Made rake patterns affect multiple grid cells for realistic width
+- Used composition pattern for rake system extensibility
+- Kept sand areas as draggable elements even with pattern overlays
+
+### Major Redesign (Same Day)
+After user feedback, completely redesigned the sand system to be more authentic:
+- Replaced draggable SandArea elements with GardenSandLayer background
+- Sand now covers the entire garden area as a foundation
+- Stones and elements are placed ON TOP of the sand (proper zen garden design)
+- Rake patterns draw directly on the garden background
+- Fixed visual overlay issues and improved authenticity
+- Updated UI text and interaction model to match new design
+
+### Next Steps
+- Add more sophisticated sand physics (displacement, smoothing)
+- Implement pattern saving/loading with garden state
+- Create additional rake patterns (circular, spiral)
+- Add sound effects for sand raking
+- Consider particle effects for sand displacement
+- Add more element types (plants, water features)
+
 ## Entry Format
 
 ```
