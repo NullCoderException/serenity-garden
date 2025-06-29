@@ -157,11 +157,50 @@ This document serves as a development journal for the Zen Garden Simulator proje
 - Grid snapping needs visual indicators to be intuitive
 
 ### Next Steps
-- Add rotation controls for placed elements
+- ✅ Add rotation controls for placed elements  (COMPLETED)
 - Implement collision detection between elements
 - Create more garden element types (water features, sand areas)
 - Add persistent storage for garden layouts
 - Implement settings menu for grid size and other options
+
+## June 29, 2025 - Element Rotation System Complete
+
+### Accomplishments
+- Added full rotation system to DraggableGameObject base class
+- Implemented R key for clockwise rotation, Shift+R for counter-clockwise
+- Created visual rotation indicator that shows selected element's orientation
+- Added rotation step configuration (15 degrees by default)
+- Integrated rotation controls with element selection system
+- Updated UI controls text to document rotation features
+
+### Technical Implementation
+- Extended DraggableGameObject with rotation methods (rotate, rotateStep, setRotationStep)
+- Added rotation indicator graphics that displays as green arrow showing current orientation
+- Indicator updates in real-time when rotating elements
+- Proper cleanup of rotation indicators on element deselection
+- Used Phaser's radian/degree conversion utilities for smooth rotation
+
+### Design Decisions
+- 15-degree rotation steps provide good balance between precision and usability
+- Green arrow indicator is clear but subtle, doesn't interfere with gameplay
+- Shift modifier for counter-clockwise feels intuitive for users
+- Rotation persists when elements are moved, providing expected behavior
+
+### User Experience Improvements
+- Visual feedback makes rotation state immediately obvious
+- Keyboard controls are responsive and feel snappy
+- Rotation works on all element types that extend DraggableGameObject
+- No conflicts with existing camera or placement controls
+
+### Next Steps
+- Create sand pattern drawing system (core zen garden mechanic)
+- Add plant elements with multiple variants
+- Implement water features (ponds, fountains)
+- Add element collision detection to prevent overlapping
+
+### Bug Fixes
+- Fixed rotation indicator not following elements during drag operations
+- Improved visual clarity of rotation indicator with center dot and filled arrowhead
 
 ### [Example Entry] May 19, 2025 - Project Setup Complete
 

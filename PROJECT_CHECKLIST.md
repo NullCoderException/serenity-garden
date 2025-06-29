@@ -23,7 +23,7 @@
   - [x] Snap-to-grid option
   - [ ] Free placement mode
   - [x] Element collision detection
-  - [ ] Element rotation and scaling
+  - [x] Element rotation and scaling
 - [ ] Design and implement UI framework
   - [x] Element selection panel
   - [ ] Tool selection (rake patterns, etc.)
