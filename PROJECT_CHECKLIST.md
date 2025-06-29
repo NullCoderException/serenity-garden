@@ -24,14 +24,14 @@
   - [ ] Free placement mode
   - [x] Element collision detection
   - [x] Element rotation and scaling
-- [ ] Design and implement UI framework
+- [x] Design and implement UI framework
   - [x] Element selection panel
-  - [ ] Tool selection (rake patterns, etc.)
-  - [ ] Settings menu (toggle grid, sound, etc.)
-  - [ ] Mode switcher (edit/meditation)
-- [ ] Create garden boundary system
-  - [ ] Define placeable areas
-  - [ ] Visual boundary indicators
+  - [x] Tool selection (rake patterns, etc.)
+  - [x] Settings menu (toggle grid, sound, etc.)
+  - [x] Mode switcher (placement/rake)
+- [x] Create garden boundary system
+  - [x] Define placeable areas (sand garden background)
+  - [x] Visual boundary indicators (garden border)
 - [ ] Implement basic save/load functionality (localStorage)
   - [ ] Garden state serialization
   - [ ] Automatic save option
@@ -42,10 +42,10 @@
   - [x] Multiple stone types/shapes
   - [x] Placement validation
   - [ ] Interaction effects
-- [ ] Sand areas
-  - [ ] Sand area creation
-  - [ ] Pattern drawing mechanics
-  - [ ] Pattern persistence
+- [x] Sand areas
+  - [x] Sand area creation
+  - [x] Pattern drawing mechanics
+  - [x] Pattern persistence
 - [ ] Plant elements
   - [ ] Multiple plant types
   - [ ] Growth/state system

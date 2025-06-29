@@ -2,6 +2,13 @@ import Phaser from 'phaser';
 import { ElementManager } from '../managers/ElementManager';
 import { Stone, StoneType } from '../gameObjects/elements/Stone';
 import { DraggableGameObject } from '../gameObjects/DraggableGameObject';
+import { RakeType } from '../systems/RakeSystem';
+import { GardenSandLayer } from '../systems/GardenSandLayer';
+
+export enum InteractionMode {
+    Placement = 'placement',
+    Rake = 'rake'
+}
 
 export default class MainScene extends Phaser.Scene {
     private isDragging: boolean = false;
@@ -12,6 +19,11 @@ export default class MainScene extends Phaser.Scene {
     private elementManager!: ElementManager;
     private gridGraphics!: Phaser.GameObjects.Graphics;
     private showGrid: boolean = true;
+    private currentMode: InteractionMode = InteractionMode.Placement;
+    private currentRakeType: RakeType = RakeType.Simple;
+    private modeText!: Phaser.GameObjects.Text;
+    private gardenSandLayer!: GardenSandLayer;
+    private gardenBounds: Phaser.Geom.Rectangle = new Phaser.Geom.Rectangle(100, 100, 1080, 520);
 
     constructor() {
         super({ key: 'MainScene' });
@@ -33,8 +45,8 @@ export default class MainScene extends Phaser.Scene {
         
         this.data.set('elementManager', this.elementManager);
         
-        this.createGrid();
         this.createGardenBase();
+        this.createGrid();
         this.setupCameraControls();
         this.createUI();
         this.createDemoElements();
@@ -44,12 +56,12 @@ export default class MainScene extends Phaser.Scene {
         this.load.on('loaderror', () => {
             this.createRectangle('stone', 50, 50, 0x808080);
             this.createRectangle('plant', 40, 60, 0x228B22);
-            this.createRectangle('sand', 100, 100, 0xF5DEB3);
+            this.createRectangle('sand-base', 100, 100, 0xF5DEB3);
         });
         
         this.createRectangle('stone', 50, 50, 0x808080);
         this.createRectangle('plant', 40, 60, 0x228B22);
-        this.createRectangle('sand', 100, 100, 0xF5DEB3);
+        this.createRectangle('sand-base', 100, 100, 0xF5DEB3);
     }
 
     private createRectangle(key: string, width: number, height: number, color: number): void {
@@ -92,13 +104,8 @@ export default class MainScene extends Phaser.Scene {
     }
     
     private createGardenBase(): void {
-        const gardenBounds = new Phaser.Geom.Rectangle(100, 100, 1080, 520);
-        const graphics = this.add.graphics();
-        
-        graphics.lineStyle(4, 0x654321);
-        graphics.fillStyle(0xF5DEB3, 0.3);
-        graphics.fillRect(gardenBounds.x, gardenBounds.y, gardenBounds.width, gardenBounds.height);
-        graphics.strokeRect(gardenBounds.x, gardenBounds.y, gardenBounds.width, gardenBounds.height);
+        // Create the garden sand layer as the base
+        this.gardenSandLayer = new GardenSandLayer(this, this.gardenBounds);
     }
 
     private setupCameraControls(): void {
@@ -145,12 +152,14 @@ export default class MainScene extends Phaser.Scene {
         
         this.add.text(10, 10, [
             'Controls:',
-            'Left Click: Select/Place elements',
+            'Left Click: Select/Place stones (Placement mode) or Draw in sand (Rake mode)',
             'Right Click + Drag: Pan camera',
             'Mouse Wheel: Zoom',
             'G: Toggle grid',
             'R: Rotate selected element (Shift+R: Counter-clockwise)',
-            'Delete: Remove selected element'
+            'Delete: Remove selected element',
+            'T: Toggle tool mode (Placement/Rake)',
+            '1-4: Switch rake types (in Rake mode)'
         ], {
             fontSize: '14px',
             color: '#ffffff',
@@ -158,6 +167,18 @@ export default class MainScene extends Phaser.Scene {
             padding: { x: 10, y: 10 }
         }).setScrollFactor(0).setDepth(1000);
         
+        // Mode indicator
+        this.modeText = this.add.text(640, 100, this.getModeText(), {
+            fontSize: '18px',
+            color: '#ffff00',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5).setScrollFactor(0).setDepth(1000);
+        
+        this.setupKeyboardControls();
+    }
+
+    private setupKeyboardControls(): void {
         this.input.keyboard?.on('keydown-G', () => {
             this.showGrid = !this.showGrid;
             this.drawGrid();
@@ -178,17 +199,93 @@ export default class MainScene extends Phaser.Scene {
                 this.elementManager.updateSelectedElementIndicator();
             }
         });
+        
+        // Tool mode switching
+        this.input.keyboard?.on('keydown-T', () => {
+            this.toggleMode();
+        });
+        
+        // Rake type switching (only in rake mode)
+        this.input.keyboard?.on('keydown-ONE', () => {
+            if (this.currentMode === InteractionMode.Rake) {
+                this.setRakeType(RakeType.Simple);
+            }
+        });
+        
+        this.input.keyboard?.on('keydown-TWO', () => {
+            if (this.currentMode === InteractionMode.Rake) {
+                this.setRakeType(RakeType.Wide);
+            }
+        });
+        
+        this.input.keyboard?.on('keydown-THREE', () => {
+            if (this.currentMode === InteractionMode.Rake) {
+                this.setRakeType(RakeType.Curved);
+            }
+        });
+        
+        this.input.keyboard?.on('keydown-FOUR', () => {
+            if (this.currentMode === InteractionMode.Rake) {
+                this.setRakeType(RakeType.Fine);
+            }
+        });
+    }
+
+    private toggleMode(): void {
+        this.currentMode = this.currentMode === InteractionMode.Placement 
+            ? InteractionMode.Rake 
+            : InteractionMode.Placement;
+        
+        this.updateModeUI();
+        this.updateSandAreasMode();
+    }
+
+    private setRakeType(rakeType: RakeType): void {
+        this.currentRakeType = rakeType;
+        this.updateModeUI();
+        this.updateSandAreasRakeType();
+    }
+
+    private updateModeUI(): void {
+        this.modeText.setText(this.getModeText());
+    }
+
+    private getModeText(): string {
+        if (this.currentMode === InteractionMode.Placement) {
+            return 'Mode: PLACEMENT - Click to place/select stones';
+        } else {
+            const rakeNames = {
+                [RakeType.Simple]: 'Simple',
+                [RakeType.Wide]: 'Wide',
+                [RakeType.Curved]: 'Curved',
+                [RakeType.Fine]: 'Fine'
+            };
+            return `Mode: RAKE (${rakeNames[this.currentRakeType]}) - Draw patterns in the sand garden`;
+        }
+    }
+
+    private updateSandAreasMode(): void {
+        if (this.currentMode === InteractionMode.Rake) {
+            this.gardenSandLayer.enableRakeMode();
+        } else {
+            this.gardenSandLayer.disableRakeMode();
+        }
+    }
+
+    private updateSandAreasRakeType(): void {
+        this.gardenSandLayer.setRakeType(this.currentRakeType);
     }
     
     private createDemoElements(): void {
+        // Create stones for placement
         const stoneTypes = [StoneType.Small, StoneType.Medium, StoneType.Large, StoneType.Flat];
         let x = 200;
         
         stoneTypes.forEach((type, index) => {
             const stone = new Stone({
                 scene: this,
-                x: x + (index * 100),
-                y: 600,
+                x: x + (index * 120),
+                y: 700,
                 texture: 'stone',
                 stoneType: type
             });
@@ -196,7 +293,35 @@ export default class MainScene extends Phaser.Scene {
             this.elementManager.addElement(stone);
         });
         
-        this.add.text(640, 550, 'Drag stones to place them in the garden', {
+        // Place a few stones in the garden as examples
+        const gardenStone1 = new Stone({
+            scene: this,
+            x: 300,
+            y: 200,
+            texture: 'stone',
+            stoneType: StoneType.Large
+        });
+        this.elementManager.addElement(gardenStone1);
+        
+        const gardenStone2 = new Stone({
+            scene: this,
+            x: 600,
+            y: 300,
+            texture: 'stone',
+            stoneType: StoneType.Medium
+        });
+        this.elementManager.addElement(gardenStone2);
+        
+        const gardenStone3 = new Stone({
+            scene: this,
+            x: 900,
+            y: 250,
+            texture: 'stone',
+            stoneType: StoneType.Small
+        });
+        this.elementManager.addElement(gardenStone3);
+        
+        this.add.text(640, 650, 'Zen Garden - Drag stones from below into the sand garden. Press T to switch to Rake mode!', {
             fontSize: '18px',
             color: '#ffffff',
             stroke: '#000000',
