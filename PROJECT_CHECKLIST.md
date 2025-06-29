@@ -46,10 +46,12 @@
   - [x] Sand area creation
   - [x] Pattern drawing mechanics
   - [x] Pattern persistence
-- [ ] Plant elements
-  - [ ] Multiple plant types
-  - [ ] Growth/state system
-  - [ ] Animation for wind effects
+- [x] Plant elements
+  - [x] Multiple plant types (SmallShrub, Tree, Flower, Grass, Bamboo)
+  - [x] Growth/state system (subtle breathing animations)
+  - [x] Animation for wind effects (sine wave wind sway)
+  - [x] Rotation system compatible with animations
+  - [x] Plant-specific placement validation and spacing
 - [ ] Water features
   - [ ] Water rendering
   - [ ] Ripple effects
