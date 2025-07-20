@@ -25,6 +25,8 @@ export default class MainScene extends Phaser.Scene {
     private modeText!: Phaser.GameObjects.Text;
     private gardenSandLayer!: GardenSandLayer;
     private gardenBounds: Phaser.Geom.Rectangle = new Phaser.Geom.Rectangle(100, 100, 1080, 520);
+    private helpPanel!: Phaser.GameObjects.Container;
+    private isHelpVisible: boolean = false;
 
     constructor() {
         super({ key: 'MainScene' });
@@ -153,45 +155,92 @@ export default class MainScene extends Phaser.Scene {
     }
 
     private createUI(): void {
-        this.add.text(640, 50, 'Serenity Garden', {
-            fontSize: '32px',
+        const { width, height } = this.cameras.main;
+        
+        // Clean, minimal HUD - responsive positioning
+        this.add.text(20, 20, 'Serenity Garden', {
+            fontSize: '24px',
             color: '#ffffff',
             stroke: '#000000',
-            strokeThickness: 4
-        }).setOrigin(0.5).setScrollFactor(0).setDepth(1000);
-        
-        this.add.text(10, 10, [
-            'Controls:',
-            'Left Click: Select/Place stones (Placement mode) or Draw in sand (Rake mode)',
-            'Right Click + Drag: Pan camera',
-            'Mouse Wheel: Zoom',
-            'G: Toggle grid',
-            'R: Rotate selected element (Shift+R: Counter-clockwise)',
-            'Delete: Remove selected element',
-            'T: Toggle tool mode (Placement/Rake)',
-            '1-4: Switch rake types (in Rake mode)'
-        ], {
-            fontSize: '14px',
-            color: '#ffffff',
-            backgroundColor: '#000000',
-            padding: { x: 10, y: 10 }
+            strokeThickness: 2
         }).setScrollFactor(0).setDepth(1000);
         
         // Mode indicator
-        this.modeText = this.add.text(640, 100, this.getModeText(), {
-            fontSize: '18px',
+        this.modeText = this.add.text(20, 50, this.getModeText(), {
+            fontSize: '16px',
             color: '#ffff00',
             stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(0.5).setScrollFactor(0).setDepth(1000);
+            strokeThickness: 1
+        }).setScrollFactor(0).setDepth(1000);
         
+        // Help reminder
+        this.add.text(20, 75, 'Press H for help', {
+            fontSize: '14px',
+            color: '#aaaaaa',
+            stroke: '#000000',
+            strokeThickness: 1
+        }).setScrollFactor(0).setDepth(1000);
+        
+        this.createHelpPanel();
         this.setupKeyboardControls();
+    }
+
+    private createHelpPanel(): void {
+        const { width, height } = this.cameras.main;
+        
+        this.helpPanel = this.add.container(0, 0);
+        this.helpPanel.setScrollFactor(0);
+        this.helpPanel.setDepth(2000);
+        
+        // Semi-transparent background - responsive size
+        const bg = this.add.graphics();
+        bg.fillStyle(0x000000, 0.8);
+        bg.fillRect(0, 0, width, height);
+        this.helpPanel.add(bg);
+        
+        // Help content - centered responsively
+        const helpText = this.add.text(width / 2, height / 2, [
+            'SERENITY GARDEN - CONTROLS',
+            '',
+            'PLACEMENT MODE:',
+            '• Left Click: Select/Place garden elements',
+            '• Drag: Move selected elements around',
+            '• R: Rotate selected element (Shift+R: Counter-clockwise)',
+            '• Delete: Remove selected element',
+            '',
+            'RAKE MODE:',
+            '• Left Click + Drag: Draw patterns in sand',
+            '• 1-4: Switch between rake types (Simple, Wide, Curved, Fine)',
+            '',
+            'CAMERA:',
+            '• Right Click + Drag: Pan camera view',
+            '• Mouse Wheel: Zoom in/out',
+            '',
+            'OTHER:',
+            '• T: Toggle between Placement and Rake modes',
+            '• G: Toggle grid overlay',
+            '• H: Toggle this help panel',
+            '',
+            'Press H again to close this help'
+        ], {
+            fontSize: '16px',
+            color: '#ffffff',
+            align: 'left',
+            lineSpacing: 4
+        }).setOrigin(0.5);
+        
+        this.helpPanel.add(helpText);
+        this.helpPanel.setVisible(false);
     }
 
     private setupKeyboardControls(): void {
         this.input.keyboard?.on('keydown-G', () => {
             this.showGrid = !this.showGrid;
             this.drawGrid();
+        });
+        
+        this.input.keyboard?.on('keydown-H', () => {
+            this.toggleHelp();
         });
         
         this.input.keyboard?.on('keydown-DELETE', () => {
@@ -239,6 +288,11 @@ export default class MainScene extends Phaser.Scene {
                 this.setRakeType(RakeType.Fine);
             }
         });
+    }
+
+    private toggleHelp(): void {
+        this.isHelpVisible = !this.isHelpVisible;
+        this.helpPanel.setVisible(this.isHelpVisible);
     }
 
     private toggleMode(): void {
@@ -367,12 +421,14 @@ export default class MainScene extends Phaser.Scene {
         });
         this.elementManager.addElement(gardenPlant2);
         
-        this.add.text(640, 650, 'Zen Garden - Drag stones and plants from below into the sand garden. Press T to switch to Rake mode!', {
-            fontSize: '18px',
-            color: '#ffffff',
+        // Simple bottom hint - responsive positioning
+        const { width, height } = this.cameras.main;
+        this.add.text(width / 2, height - 40, 'Drag elements from palette below • Press T to switch modes', {
+            fontSize: '14px',
+            color: '#cccccc',
             stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(0.5);
+            strokeThickness: 1
+        }).setOrigin(0.5).setScrollFactor(0).setDepth(1000);
     }
     
     public update(time: number, delta: number): void {
