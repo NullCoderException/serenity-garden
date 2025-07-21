@@ -188,15 +188,19 @@ export default class MainScene extends Phaser.Scene {
     private createHelpPanel(): void {
         const { width, height } = this.cameras.main;
         
+        // Help panel constants
+        const HELP_PANEL_COLOR = 0x000000;
+        const HELP_PANEL_OPACITY = 0.8;
+        
         this.helpPanel = this.add.container(0, 0);
         this.helpPanel.setScrollFactor(0);
         this.helpPanel.setDepth(2000);
         
         // Semi-transparent background - responsive size
-        const bg = this.add.graphics();
-        bg.fillStyle(0x000000, 0.8);
-        bg.fillRect(0, 0, width, height);
-        this.helpPanel.add(bg);
+        const backgroundGraphics = this.add.graphics();
+        backgroundGraphics.fillStyle(HELP_PANEL_COLOR, HELP_PANEL_OPACITY);
+        backgroundGraphics.fillRect(0, 0, width, height);
+        this.helpPanel.add(backgroundGraphics);
         
         // Help content - centered responsively
         const helpText = this.add.text(width / 2, height / 2, [
